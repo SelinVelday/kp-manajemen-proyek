@@ -6,23 +6,23 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('lists', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('project_id')->constrained()->onDelete('cascade');
+            
+            // Penting: Tipe data harus sama dengan projects.id (string)
+            $table->string('project_id', 20); 
+            
             $table->string('name');
-            $table->unsignedInteger('position');
+            $table->integer('position')->default(0);
             $table->timestamps();
+
+            // Definisikan Foreign Key manual karena tipe datanya string
+            $table->foreign('project_id')->references('id')->on('projects')->onDelete('cascade');
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('lists');

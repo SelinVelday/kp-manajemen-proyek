@@ -4,36 +4,27 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Team extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'owner_id'];
+    protected $fillable = ['owner_id', 'name'];
 
-    /**
-     * Relasi: Sebuah Tim dimiliki oleh seorang User.
-     */
-    public function owner(): BelongsTo
+    public function owner()
     {
         return $this->belongsTo(User::class, 'owner_id');
     }
 
-    /**
-     * Relasi: Sebuah Tim memiliki banyak Anggota (User).
-     */
-    public function members(): BelongsToMany
+    // Relasi Many-to-Many Custom
+    public function users()
     {
-        return $this->belongsToMany(User::class, 'team_user')->withPivot('role');
+        return $this->belongsToMany(User::class, 'team_user')
+                    ->withPivot('role_id', 'joined_at')
+                    ->using(TeamUser::class); // Menggunakan model pivot kustom kita
     }
 
-    /**
-     * Relasi: Sebuah Tim memiliki banyak Proyek.
-     */
-    public function projects(): HasMany
+    public function projects()
     {
         return $this->hasMany(Project::class);
     }

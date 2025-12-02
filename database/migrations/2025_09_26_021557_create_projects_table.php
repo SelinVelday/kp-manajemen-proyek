@@ -6,23 +6,22 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('projects', function (Blueprint $table) {
-            $table->id();
+            $table->string('id', 20)->primary(); // Ganti ID jadi String (Primary Key)
             $table->foreignId('team_id')->constrained()->onDelete('cascade');
             $table->string('name');
             $table->text('description')->nullable();
+            
+            // Status & Due Date Baru
+            $table->enum('status', ['planning', 'active', 'completed', 'on_hold'])->default('planning');
+            $table->date('due_date')->nullable();
+            
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('projects');
